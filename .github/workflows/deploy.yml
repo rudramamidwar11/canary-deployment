@@ -26,11 +26,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install and test
-        run: |
-          cd app
-          pip install -r requirements.txt
-          pytest tests/ -v
+      - - name: Install and test
+          run: |
+            cd app
+            pip install -r requirements.txt
+            PYTHONPATH=. pytest tests/ -vv
 
       - name: Configure AWS (OIDC — no keys stored)
         uses: aws-actions/configure-aws-credentials@v4
