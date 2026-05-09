@@ -1,0 +1,24 @@
+groups:
+  - name: canary_alerts
+    rules:
+      - alert: CanaryHighErrorRate
+        expr: |
+          100 * sum(rate(app_requests_total{status_code=~"5..",deployment="canary"}[2m]))
+          / (sum(rate(app_requests_total{deployment="canary"}[2m])) + 0.001) > 5
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Canary error rate too high"
+          description: "Error rate is {{ $value | printf \"%.1f\" }}%"
+
+      - alert: CanaryHighLatency
+        expr: |
+          avg(rate(app_request_duration_seconds_sum{deployment="canary"}[2m]))
+          / avg(rate(app_request_duration_seconds_count{deployment="canary"}[2m]) + 0.001) > 2
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Canary latency too high"
+          description: "Latency is {{ $value | printf \"%.2f\" }}s"
